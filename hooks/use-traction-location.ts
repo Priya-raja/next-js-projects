@@ -18,7 +18,7 @@ const useTrackLocation = () => {
     setLongLat(`${longitude},${latitude}`);
     setIsFindingLocation(false);
     setLocationErrorMsg('');
-    console.log(`Latitude: ${latitude} °, Longitude: ${longitude} °`);
+    
   }
 
   function error(err?: GeolocationPositionError) {
@@ -52,10 +52,10 @@ const useTrackLocation = () => {
 
   const handleTrackLocation = () => {
     if (!navigator.geolocation) {
-      console.log('Geolocation is not supported by your browser');
+      
       setLocationErrorMsg('Geolocation is not supported by your browser');
     } else {
-      console.log('Locating…');
+      
       setIsFindingLocation(true);
       setLocationErrorMsg('');
       navigator.geolocation.getCurrentPosition(success, error, {

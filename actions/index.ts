@@ -10,11 +10,11 @@ type State = {
 export const upvoteAction = async (prevState: State | undefined) => {
   if (!prevState) return undefined;
 
-  console.log('upvote action');
+ 
   const { id } = prevState;
 
   const data = await updateCoffeeStore(id);
-  console.log({ data });
+ 
 
   if (data) {
     return {
