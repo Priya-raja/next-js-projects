@@ -52,11 +52,11 @@ export const createCoffeeStore = async (
           },
         ]);
         if (createRecords.length > 0) {
-          console.log('Created a store with id', id);
+         
           return getMinifiedRecords(createRecords);
         }
       } else {
-        console.log('Coffee store exists');
+        
         return records;
       }
     } else {
@@ -85,7 +85,7 @@ export const updateCoffeeStore = async (id: string) => {
         ]);
 
         if (updatedRecords.length > 0) {
-          console.log('Created a store with id', id);
+         
           return getMinifiedRecords(updatedRecords);
         }
       } else {
