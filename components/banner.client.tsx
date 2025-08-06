@@ -1,13 +1,13 @@
 'use client';
 
 import Image from 'next/image';
-// import { MouseEventHandler } from 'react';
+import { MouseEventHandler } from 'react';
 
 const Banner = ({
-  // handleOnClick,
+  handleOnClick,
   buttonText,
 }: {
-  // handleOnClick: MouseEventHandler<HTMLButtonElement> | undefined;
+  handleOnClick: MouseEventHandler<HTMLButtonElement> | undefined;
   buttonText: string;
 }) => {
   return (
@@ -22,7 +22,7 @@ const Banner = ({
         </p>
 
         <div className="mt-12">
-          <button>{buttonText}</button>
+          <button onClick={handleOnClick}>{buttonText}</button>
         </div>
       </div>
       <div className="absolute top-2 z-10 md:top-0 md:mt-12 md:pl-10 md:pt-0 lg:right-1/4 lg:flex lg:pl-20">
@@ -32,8 +32,6 @@ const Banner = ({
           height={300}
           alt="hero image"
           priority={true}
-          blurDataURL='data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw=='
-          placeholder='blur'
         />
       </div>
     </div>

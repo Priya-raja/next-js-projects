@@ -2,13 +2,26 @@ import Link from 'next/link'
 import React from 'react'
 import { fetchCoffeeStore, fetchCoffeeStores } from '@/lib/coffee-stores';
 import Image from 'next/image';
-import { CoffeeStoreType } from '@/types';
-
+import { CoffeeStoreType, ServerParamsType } from '@/types';
+import {createCoffeeStore} from '@/lib/airtable';
+import Upvote from '@/components/upvote.client';
+import { getDomain } from '@/utils';
 
 
 async function getData(id: string, queryId: string) {
-        return await fetchCoffeeStore(id,queryId);  
-     }
+  const coffeeStoreFromMapbox = await fetchCoffeeStore(id, queryId);
+  const _createCoffeeStore = await createCoffeeStore(coffeeStoreFromMapbox, id);
+
+  const voting = _createCoffeeStore ? _createCoffeeStore[0].voting : 0;
+
+  return coffeeStoreFromMapbox
+    ? {
+        ...coffeeStoreFromMapbox,
+        voting,
+      }
+    : {};
+}
+
 
 export async function generateStaticParams() {
   const TORONTO_LONG_LAT = '-79.3789680885594%2C43.653833032607096';
@@ -19,31 +32,44 @@ export async function generateStaticParams() {
   }));
 }
 
+
+export async function generateMetadata({ params, searchParams }: ServerParamsType) {
+ 
+  const resolvedParams = await params;
+  const resolvedSearchParams = await searchParams;
+  
+  const coffeeStore = await fetchCoffeeStore(resolvedParams.id, resolvedSearchParams.id);
+  const { name = '' } = coffeeStore;
+
+  return {
+    title: name,
+    description: `${name} - coffee store`,
+    metadataBase: getDomain(),
+    alternates: {
+      canonical: `/coffee-store/${resolvedParams.id}`,
+      languages: {
+        'en': `/coffee-store/${resolvedParams.id}`,
+      }
+    }
+  };
+}
+  
+
 export default async function Page(props: 
     { params: Promise<{ id: string }> ;
     searchParams: Promise<{ id: string }>;
 }) {
+  
+     
   const params = await props.params;
   const searchParams = await props.searchParams;
 
+  const { id } = params;
+  const { id: queryId } = searchParams;
 
-    const { id } = params;
-    const { id: queryId } = searchParams;
-
-
-   const coffeeStore = await getData(id, queryId);
-
-
-  console.log("coffee", coffeeStore);
-
-     
-        if (!coffeeStore) {
-            return <div className='text-white'>No coffee store found!</div>
-        }
-        const { name='', imgUrl='', address='' } = coffeeStore;
-
-     console.log("coffee",coffeeStore);
-
+  const coffeeStore = await getData(id, queryId);
+  
+  const { name = '', address = '', imgUrl = '', voting} = coffeeStore;
   return (
     <div className="h-full pb-80">
       <div className="m-auto grid max-w-full px-12 py-12 lg:max-w-6xl lg:grid-cols-2 lg:gap-4">
@@ -65,6 +91,7 @@ export default async function Page(props:
             alt={'Coffee Store Image'}
           />
         </div>
+
         <div className={`glass mt-12 flex-col rounded-lg p-4 lg:mt-48`}>
           {address && (
             <div className="mb-4 flex">
@@ -77,10 +104,11 @@ export default async function Page(props:
               <p className="pl-2">{address}</p>
             </div>
           )}
-        
-     </div>
-     </div>
+          <Upvote voting={voting} id={id} />
+        </div>
+      </div>
     </div>
-  )
+  );
+
 }
 
