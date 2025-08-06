@@ -1,3 +1,4 @@
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { AirtableRecordType, CoffeeStoreType } from '@/types';
 import Airtable, { FieldSet, Record, Records } from 'airtable';
 
